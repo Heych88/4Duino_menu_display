@@ -9,6 +9,8 @@
 %%Display%%.IncludeSerial_4DLib ;          // *Replaced* at compile time with an Include the Serial Library relevant to the display
 #include "%%Display%%.Processor_LedDigitsDisplay.h"
 #include "%%Display%%.Processor_PrintDisk.h"
+#include "XYposToDegree.h"
+#include "%%Display%%.Processor_KBRoutines.h"
 %%Display%%.IncludeSerial_Const4D ;        // *Replaced* at compile time with an Include the Constants file relevant to the display
 
 %%Display%%.AssignDisplaySerialtoLibrary ; // *Replaced* at compile time with an Assign of the correct Serial port to the correct library
@@ -144,12 +146,9 @@ void setup()
   Display.img_ClearAttributes(hndl, iWinbutton2, I_TOUCH_DISABLE); // stopButton set to enable touch, only need to do this once
 
 
-  Display.img_ClearAttributes(hndl, iUserbutton5, I_TOUCH_DISABLE); // homebutton5 set to enable touch, only need to do this once
-  Display.img_Show(hndl, iUserbutton5);                             // homebutton5 show button, only do this once
-  Display.img_ClearAttributes(hndl, iUserbutton6, I_TOUCH_DISABLE); // homeButton6 set to enable touch, only need to do this once
-  Display.img_Show(hndl, iUserbutton6);                             // homeButton6 show button, only do this once
 } // end Setup **do not alter, remove or duplicate this line**
 
+int n;
 void loop()
 {
   // put your main code here, to run repeatedly:
@@ -158,11 +157,19 @@ void loop()
   short x, y;
   while(1) {
     state = Display.touch_Get(TOUCH_STATUS); // get touchscreen status
+    n = Display.img_Touched(hndl,-1) ;
+
     //-----------------------------------------------------------------------------------------
     if(state == TOUCH_PRESSED) { // if there's a press, or it's moving
       x = Display.touch_Get(TOUCH_GETX);
       y = Display.touch_Get(TOUCH_GETY);
       timer = millis();  // reset the dispaly timeout timer
+
+      // This is for the keydown event
+      if ((n >= iKeyboard1) && (n <= iKeyboard1+oKeyboard1[KbButtons])){
+        kbDown(Display, hndl, iKeyboard1, oKeyboard1, iKeyboard1keystrokes, n-iKeyboard1, KbHandler) ;  // Keyboard1
+        //kbDown(Display, hndl, ikeyboard1, okeyboard1, ikeyboard1keystrokes, n-ikeyboard1, KbHandler) ;
+      }
     }
 
     //-----------------------------------------------------------------------------------------
@@ -207,7 +214,7 @@ void loop()
           menu_state = MENU_QTY;
           setDisplay();
         }
-      }
+      } else if (oKeyboard1[KbDown] != -1) kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
     }
 
     if((menu_state != HOME) && (millis() - timer >= MENU_RESET_DELAY)){
@@ -217,7 +224,6 @@ void loop()
     }
   }
 }
-
 
 void stopStartButtonDispaly() {
 
@@ -279,53 +285,65 @@ void homeWindow() {
 
 void speedWindow() {
   // displaye the menu window to adjust the motor speed
+  %%Display%%.Form2 ;  // lengthform
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
   //homeButtonDisplay(); // display home button
 
-  // Form2 1.1 generated 7/13/2017 10:44:54 AM
-  %%Display%%.Form2 ;  // Form2
-  Display.img_SetWord(hndl, iUserbutton4, IMAGE_INDEX, 0); // homeButton where state is 0 for up and 1 for down, or 2 total states
-  Display.img_Show(hndl,iUserbutton4) ;  // homeButton
+  //Display.img_SetWord(hndl, iUserbutton4, IMAGE_INDEX, 0); // homeButton where state is 0 for up and 1 for down, or 2 total states
+  //Display.img_Show(hndl,iUserbutton4) ;  // homeButton
 
   //add the current motor speed to the display
   char str[50];
   sprintf(str, "Speed : %d", current_speed);
-  printToScreen(str);  // quantity update
+  printToScreen(str);  // speed update
+
+  Display.img_Show(hndl,iKeyboard1) ; // Keyboard1 show initial keyboard
+  for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++)
+      Display.img_ClearAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
+
 }
 
 void lengthWindow() {
   // displaye the menu window to adjust the length of the plastic to cut
-  %%Display%%.Form3 ;  // lengthform
+  %%Display%%.Form2 ;  // lengthform
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
   //homeButtonDisplay(); // display home button
 
-  Display.img_SetWord(hndl, iUserbutton5, IMAGE_INDEX, 0); // homebutton5 where state is 0 for up and 1 for down, or 2 total states
-  Display.img_Show(hndl,iUserbutton5) ;  // homebutton5
+  //Display.img_SetWord(hndl, iUserbutton5, IMAGE_INDEX, 0); // homebutton5 where state is 0 for up and 1 for down, or 2 total states
+  //Display.img_Show(hndl,iUserbutton5) ;  // homebutton5
 
   //add the set cutting length to the display
   char str[50];
   sprintf(str, "size : %d", cut_length);
   printToScreen(str);  // quantity update
+
+  Display.img_Show(hndl,iKeyboard1) ; // Keyboard1 show initial keyboard
+  for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++)
+      Display.img_ClearAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
 }
 
 void qtyWindow() {
   // displaye the menu window to adjust the quantity of plastic pieces to cut
-  %%Display%%.Form4 ;  // quantityform
+  %%Display%%.Form2 ;  // quantityform
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
   //homeButtonDisplay(); // display home button
-  Display.img_SetWord(hndl, iUserbutton6, IMAGE_INDEX, 0); // homeButton6 where state is 0 for up and 1 for down, or 2 total states
-  Display.img_Show(hndl,iUserbutton6) ;  // homeButton6
+  //Display.img_SetWord(hndl, iUserbutton6, IMAGE_INDEX, 0); // homeButton6 where state is 0 for up and 1 for down, or 2 total states
+  //Display.img_Show(hndl,iUserbutton6) ;  // homeButton6
 
   //add the quantity values to the display
   char str[50];
   sprintf( str, "Qty : %d/%d", current_qty, total_qty);
   printToScreen(str);  // quantity update
+
+  Display.img_Show(hndl,iKeyboard1) ; // Keyboard1 show initial keyboard
+  for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++)
+      Display.img_ClearAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
 }
 
 void setDisplay() {
@@ -342,6 +360,35 @@ void setDisplay() {
       break;
     default:
       homeWindow();
+  }
+}
+
+void KbHandler(int Key)
+{
+  char str[50];
+
+  if(Key == 11) {
+    menu_state = HOME;
+  } else if(Key = 10) {
+    Key = 0;
+  }
+
+  switch(menu_state){
+    case MENU_SPEED:
+      sprintf(str, "Speed : %d", Key);
+      printToScreen(str);  // speed update
+      break;
+    case MENU_LENGTH:
+      sprintf(str, "Size : %d", Key);
+      printToScreen(str);  // speed update
+      break;
+    case MENU_QTY:
+      sprintf(str, "Total : %d", Key);
+      printToScreen(str);  // speed update
+      break;
+    case HOME:
+      break;
+    //default:
   }
 }
 

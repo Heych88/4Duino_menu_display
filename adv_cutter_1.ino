@@ -15,6 +15,8 @@
 #include "Picaso_Serial_4DLib.h"
 #include "Picaso_LedDigitsDisplay.h"
 #include "Picaso_PrintDisk.h"
+#include "XYposToDegree.h"
+#include "Picaso_KBRoutines.h"
 #include "Picaso_Const4D.h"
 
 Picaso_Serial_4DLib Display(&DisplaySerial);
@@ -150,12 +152,9 @@ digitalWrite(RESETLINE, 0);       // Release Display Reset, using shield
   Display.img_ClearAttributes(hndl, iWinbutton2, I_TOUCH_DISABLE); // stopButton set to enable touch, only need to do this once
 
 
-  Display.img_ClearAttributes(hndl, iUserbutton5, I_TOUCH_DISABLE); // homebutton5 set to enable touch, only need to do this once
-  Display.img_Show(hndl, iUserbutton5);                             // homebutton5 show button, only do this once
-  Display.img_ClearAttributes(hndl, iUserbutton6, I_TOUCH_DISABLE); // homeButton6 set to enable touch, only need to do this once
-  Display.img_Show(hndl, iUserbutton6);                             // homeButton6 show button, only do this once
 } // end Setup **do not alter, remove or duplicate this line**
 
+int n;
 void loop()
 {
   // put your main code here, to run repeatedly:
@@ -164,11 +163,19 @@ void loop()
   short x, y;
   while(1) {
     state = Display.touch_Get(TOUCH_STATUS); // get touchscreen status
+    n = Display.img_Touched(hndl,-1) ;
+
     //-----------------------------------------------------------------------------------------
     if(state == TOUCH_PRESSED) { // if there's a press, or it's moving
       x = Display.touch_Get(TOUCH_GETX);
       y = Display.touch_Get(TOUCH_GETY);
       timer = millis();  // reset the dispaly timeout timer
+
+      // This is for the keydown event
+      if ((n >= iKeyboard1) && (n <= iKeyboard1+oKeyboard1[KbButtons])){
+        kbDown(Display, hndl, iKeyboard1, oKeyboard1, iKeyboard1keystrokes, n-iKeyboard1, KbHandler) ;  // Keyboard1
+        //kbDown(Display, hndl, ikeyboard1, okeyboard1, ikeyboard1keystrokes, n-ikeyboard1, KbHandler) ;
+      }
     }
 
     //-----------------------------------------------------------------------------------------
@@ -213,7 +220,7 @@ void loop()
           menu_state = MENU_QTY;
           setDisplay();
         }
-      }
+      } else if (oKeyboard1[KbDown] != -1) kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
     }
 
     if((menu_state != HOME) && (millis() - timer >= MENU_RESET_DELAY)){
@@ -223,7 +230,6 @@ void loop()
     }
   }
 }
-
 
 void stopStartButtonDispaly() {
 
@@ -261,7 +267,7 @@ void homeWindow() {
   // displaye the home window
   Display.gfx_Cls();   // clear screen
   
-  // Form1 1.1 generated 7/13/2017 3:37:08 PM
+  // Form1 1.1 generated 7/14/2017 12:27:10 AM
 
   stopStartButtonDispaly();
 
@@ -293,20 +299,25 @@ void speedWindow() {
 
   // Form2 1.1 generated 7/13/2017 10:44:54 AM
   
-  // Form2 1.1 generated 7/13/2017 3:37:08 PM
-  Display.img_SetWord(hndl, iUserbutton4, IMAGE_INDEX, 0); // homeButton where state is 0 for up and 1 for down, or 2 total states
-  Display.img_Show(hndl,iUserbutton4) ;  // homeButton
+  // Form2 1.1 generated 7/14/2017 12:27:10 AM
+  //Display.img_SetWord(hndl, iUserbutton4, IMAGE_INDEX, 0); // homeButton where state is 0 for up and 1 for down, or 2 total states
+  //Display.img_Show(hndl,iUserbutton4) ;  // homeButton
 
   //add the current motor speed to the display
   char str[50];
   sprintf(str, "Speed : %d", current_speed);
-  printToScreen(str);  // quantity update
+  printToScreen(str);  // speed update
+
+  Display.img_Show(hndl,iKeyboard1) ; // Keyboard1 show initial keyboard
+  for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++)
+      Display.img_ClearAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
+
 }
 
 void lengthWindow() {
   // displaye the menu window to adjust the length of the plastic to cut
   
-  // Form3 1.1 generated 7/13/2017 3:37:08 PM
+  // Form3 1.1 generated 7/14/2017 12:27:10 AM
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
@@ -324,7 +335,7 @@ void lengthWindow() {
 void qtyWindow() {
   // displaye the menu window to adjust the quantity of plastic pieces to cut
   
-  // Form4 1.1 generated 7/13/2017 3:37:08 PM
+  // Form4 1.1 generated 7/14/2017 12:27:10 AM
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
@@ -353,5 +364,38 @@ void setDisplay() {
     default:
       homeWindow();
   }
+}
+
+void KbHandler(int Key)
+{
+  char str[50];
+
+  if(Key == 11) {
+    menu_state = HOME;
+  }
+
+  switch(menu_state){
+    case MENU_SPEED:
+      sprintf(str, "Speed : %d", Key);
+      printToScreen(str);  // speed update
+      break;
+    case MENU_LENGTH:
+      sprintf(str, "Size : %d", Key);
+      printToScreen(str);  // speed update
+      break;
+    case MENU_QTY:
+      sprintf(str, "Total : %d", Key);
+      printToScreen(str);  // speed update
+      break;
+    case HOME:
+      break;
+    //default:
+  }
+    //Display.txt_MoveCursor(8,8);
+    //Display.putstr(">> ") ;
+    //Display.print(Key) ;
+    //Display.putstr(" 0x") ;
+    //Display.print(Key, HEX) ;
+    //Display.putstr(" << ") ;
 }
 

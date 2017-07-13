@@ -214,63 +214,27 @@ UserButton
     Width                        64
     OnChanged                    ''
 end
-Form
-    Name                         Form3
-    Alias                        lengthform
-    Bgtype                       Color
-    Color                        BLACK
-    Image                        (None)
-    Source.Height                0
-    Source.Left                  0
-    Source.Top                   0
-    Source.Width                 0
-    OnActivate                   ''
-    OnCreate                     ''
-    OnRepeat                     ''
-    OnTouchMoving                ''
-    OnTouchPressed               ''
-    OnTouchReleased              ''
-end
-UserButton
-    Name                         Userbutton5
-    Alias                        homebutton5
-    Height                       64
-    Images                       if_Home_728980_64x64.png
-    Left                         8
-    Matrix                       -1
-    Momentary                    Yes
-    Stretch                      No
-    Top                          172
-    Width                        64
-    OnChanged                    ''
-end
-Form
-    Name                         Form4
-    Alias                        quantityform
-    Bgtype                       Color
-    Color                        BLACK
-    Image                        (None)
-    Source.Height                0
-    Source.Left                  0
-    Source.Top                   0
-    Source.Width                 0
-    OnActivate                   ''
-    OnCreate                     ''
-    OnRepeat                     ''
-    OnTouchMoving                ''
-    OnTouchPressed               ''
-    OnTouchReleased              ''
-end
-UserButton
-    Name                         Userbutton6
-    Alias                        homeButton6
-    Height                       64
-    Images                       if_Home_728980_64x64.png
-    Left                         8
-    Matrix                       -1
-    Momentary                    Yes
-    Stretch                      No
-    Top                          172
-    Width                        64
+Keyboard
+    Name                         Keyboard1
+    Alias                        Keyboard1
+    AutoCapsDisplay              Yes
+    Fill                         (Default)
+    Font.Color                   BLACK
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    8
+    Font.Style                   []
+    Height                       200
+    HighlightCaps                BLACK
+    KeyboardType                 KB1
+    KeyDistance                  0
+    Left                         4
+    SmallFont.Color              BLACK
+    SmallFont.Effects            []
+    SmallFont.Name               Tahoma
+    SmallFont.Size               7
+    SmallFont.Style              []
+    Top                          40
+    Width                        232
     OnChanged                    ''
 end
