@@ -13,6 +13,8 @@
 #include "adv_cutter_1Const.h"
 
 #include "Picaso_Serial_4DLib.h"
+#include "Picaso_LedDigitsDisplay.h"
+#include "Picaso_PrintDisk.h"
 #include "Picaso_Const4D.h"
 
 Picaso_Serial_4DLib Display(&DisplaySerial);
@@ -67,6 +69,9 @@ word hndl ;
 bool system_stop;
 char menu_state;
 long timer;
+word hFont1, hstrings;
+int txt_start_left = 8; // left offset of text
+int txt_start_height = 8; // top offset of text
 
 void setup()
 {
@@ -114,8 +119,8 @@ digitalWrite(RESETLINE, 0);       // Release Display Reset, using shield
       delay(200);
     }
   }
-//hFontn = Display.file_LoadImageControl("NoName1.dnn", "NoName1.gnn", 1); // Open handle to access uSD fonts, uncomment if required and change nn to font number
-//hstrings = Display.file_Open("ADV_CU~1.txf", 'r') ;                            // Open handle to access uSD strings, uncomment if required
+  hFont1 = Display.file_LoadImageControl("ADV_CU~1.dnn", "ADV_CU~1.gnn", 1); // Open handle to access uSD fonts, uncomment if required and change nn to font number
+  hstrings = Display.file_Open("ADV_CU~1.txf", 'r') ;                            // Open handle to access uSD strings, uncomment if required
   hndl = Display.file_LoadImageControl("ADV_CU~1.dat", "ADV_CU~1.gci", 1);
   // put your setup code here, to run once:
 
@@ -136,6 +141,8 @@ digitalWrite(RESETLINE, 0);       // Release Display Reset, using shield
   Display.img_ClearAttributes(hndl, iUserbutton4, I_TOUCH_DISABLE); // homeButton set to enable touch, only need to do this once
   Display.img_ClearAttributes(hndl, iWinbutton1, I_TOUCH_DISABLE); // startButton set to enable touch, only need to do this once
   Display.img_ClearAttributes(hndl, iWinbutton2, I_TOUCH_DISABLE); // stopButton set to enable touch, only need to do this once
+
+
 } // end Setup **do not alter, remove or duplicate this line**
 
 void loop()
@@ -232,16 +239,53 @@ void homeButtonDisplay() {
   Display.img_Show(hndl,iUserbutton4) ;  // homeButton
 }
 
-void qtyDisplay() {
-  printToScreen("Qty:", 30, 20);
+
+
+void qtyDisplay(char* str, int start_height=8) {
+  //printToScreen("Qty:", 30, 20);
+  Display.txt_FontID(FONT3);
+  Display.txt_Width(2) ;
+  Display.txt_Height(2) ;
+  Display.txt_FGcolour(WHITE) ;
+  Display.txt_BGcolour(BLACK) ;
+  Display.gfx_MoveTo(txt_start_left, start_height) ;
+  Display.putstr(str) ;      // quantity
+  Display.txt_Width(1) ;
+  Display.txt_Height(1) ;
+
+  //LedDigitsDisplay(Display, hndl, 61, iLeddigits2+1, 68, 3, 1, 26, 1) ;  // qty_done
+  //Display.img_Show(hndl,iStatictext4) ;  // slash_string
+  //LedDigitsDisplay(Display, hndl, 289, iLeddigits3+1, 156, 3, 1, 26, 1) ;  // qty_total
+
 }
 
-void speedDisplay() {
-  printToScreen("speed:", 30, 20);
+void speedDisplay(int start_height=92) {
+  //printToScreen("speed:", 30, 20);
+  Display.txt_FontID(FONT3);
+  Display.txt_Width(2) ;
+  Display.txt_Height(2) ;
+  Display.txt_FGcolour(WHITE) ;
+  Display.txt_BGcolour(BLACK) ;
+  Display.gfx_MoveTo(txt_start_left, start_height) ;
+  Display.putstr("Speed : 24.3%") ;      // speed_label
+  Display.txt_Width(1) ;
+  Display.txt_Height(1) ;
+
+  //LedDigitsDisplay(Display, hndl, 248, iLeddigits4+1, 156, 3, 2, 26, 1) ;  // speed_digit
+
 }
 
-void lengthDisplay() {
-  printToScreen("length:", 30, 20);
+void lengthDisplay(int start_height=50) {
+  Display.txt_FontID(FONT3);
+  Display.txt_Width(2) ;
+  Display.txt_Height(2) ;
+  Display.txt_FGcolour(WHITE) ;
+  Display.txt_BGcolour(BLACK) ;
+  Display.gfx_MoveTo(txt_start_left, start_height) ;
+  Display.putstr("Size : 27.5cm") ;      // length_label
+  Display.txt_Width(1) ;
+  Display.txt_Height(1) ;
+
 }
 
 void homeWindow() {
@@ -259,9 +303,10 @@ void homeWindow() {
   Display.img_SetWord(hndl, iUserbutton3, IMAGE_INDEX, 0); // quantityButton where state is 0 for up and 1 for down, or 2 total states
   Display.img_Show(hndl,iUserbutton3) ;  // quantityButton
 
-  qtyDisplay();
-  speedDisplay();
-  lengthDisplay();
+  qtyDisplay("Qty : 97/154");
+  qtyDisplay("Qty : 97/154", 60);
+  //speedDisplay();
+  //lengthDisplay();
 }
 
 void speedWindow() {
@@ -269,7 +314,15 @@ void speedWindow() {
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
-  homeButtonDisplay(); // display home button
+  //homeButtonDisplay(); // display home button
+
+  // Form2 1.1 generated 7/13/2017 10:44:54 AM
+  
+  // Form2 1.1 generated 7/13/2017 2:26:23 PM
+  LedDigitsDisplay(Display, hndl, 7.1, iLeddigits1+1, 74, 4, 2, 30, 1) ;  // Leddigits1
+  LedDigitsDisplay(Display, hndl, 53.2, iiCustomdigits1, 44, 4, 1, 9, 0) ;  // Customdigits1
+  Display.img_SetWord(hndl, iUserbutton4, IMAGE_INDEX, 0); // homeButton where state is 0 for up and 1 for down, or 2 total states
+  Display.img_Show(hndl,iUserbutton4) ;  // homeButton
 
   speedDisplay();
 }
@@ -291,7 +344,7 @@ void qtyWindow() {
   stopStartButtonDispaly();
   homeButtonDisplay(); // display home button
 
-  qtyDisplay();
+  //qtyDisplay();
 }
 
 void setDisplay() {

@@ -167,6 +167,167 @@ UserButton
     Width                        64
     OnChanged                    ''
 end
+LedDigits
+    Name                         Leddigits2
+    Alias                        qty_done
+    Color                        BLACK
+    Decimals                     0
+    Digits                       3
+    Height                       27
+    LeadingZero                  No
+    Left                         68
+    OutlineColor                 BLACK
+    Palette.High                 LIGHTYELLOW
+    Palette.Low                  BLACK
+    Top                          8
+    Width                        80
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Label
+    Name                         Label1
+    Alias                        length_num
+    4DGLFont.Font                FONT3
+    4DGLFont.Bold                No
+    4DGLFont.Italic              No
+    4DGLFont.Inverse             No
+    4DGLFont.Underline           No
+    4DGLFont.MagWidth            2
+    4DGLFont.MagHeight           2
+    4DGLFont.Opaque              Yes
+    BGcolor                      BLACK
+    Caption                      text
+    FGcolor                      WHITE
+    Left                         115
+    Top                          50
+end
+LedDigits
+    Name                         Leddigits3
+    Alias                        qty_total
+    Color                        BLACK
+    Decimals                     0
+    Digits                       3
+    Height                       27
+    LeadingZero                  No
+    Left                         156
+    OutlineColor                 BLACK
+    Palette.High                 LIGHTYELLOW
+    Palette.Low                  BLACK
+    Top                          8
+    Width                        80
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+StaticText
+    Name                         Statictext4
+    Alias                        slash_string
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      /
+    Color                        BLACK
+    Font.Color                   WHITE
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    18
+    Font.Style                   []
+    Height                       29
+    Left                         145
+    Top                          5
+    Transparent                  Yes
+    Width                        9
+    WordWrap                     Yes
+end
+LedDigits
+    Name                         Leddigits4
+    Alias                        speed_digit
+    Color                        BLACK
+    Decimals                     1
+    Digits                       3
+    Height                       27
+    LeadingZero                  No
+    Left                         156
+    OutlineColor                 BLACK
+    Palette.High                 LIGHTYELLOW
+    Palette.Low                  BLACK
+    Top                          92
+    Width                        80
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Label
+    Name                         Label2
+    Alias                        length_label
+    4DGLFont.Font                FONT3
+    4DGLFont.Bold                No
+    4DGLFont.Italic              No
+    4DGLFont.Inverse             No
+    4DGLFont.Underline           No
+    4DGLFont.MagWidth            2
+    4DGLFont.MagHeight           2
+    4DGLFont.Opaque              Yes
+    BGcolor                      BLACK
+    Caption                      'Size :'
+    FGcolor                      WHITE
+    Left                         8
+    Top                          50
+end
+Label
+    Name                         Label3
+    Alias                        quantity
+    4DGLFont.Font                FONT3
+    4DGLFont.Bold                No
+    4DGLFont.Italic              No
+    4DGLFont.Inverse             No
+    4DGLFont.Underline           No
+    4DGLFont.MagWidth            2
+    4DGLFont.MagHeight           2
+    4DGLFont.Opaque              Yes
+    BGcolor                      BLACK
+    Caption                      'Qty :'
+    FGcolor                      WHITE
+    Left                         8
+    Top                          8
+end
+Label
+    Name                         Label4
+    Alias                        speed_label
+    4DGLFont.Font                FONT3
+    4DGLFont.Bold                No
+    4DGLFont.Italic              No
+    4DGLFont.Inverse             No
+    4DGLFont.Underline           No
+    4DGLFont.MagWidth            2
+    4DGLFont.MagHeight           2
+    4DGLFont.Opaque              Yes
+    BGcolor                      BLACK
+    Caption                      'Speed :'
+    FGcolor                      WHITE
+    Left                         8
+    Top                          92
+end
+Form
+    Name                         Form2
+    Alias                        Form2
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
 UserButton
     Name                         Userbutton4
     Alias                        homeButton
@@ -179,4 +340,36 @@ UserButton
     Top                          172
     Width                        64
     OnChanged                    ''
+end
+LedDigits
+    Name                         Leddigits1
+    Alias                        Leddigits1
+    Color                        BLACK
+    Decimals                     1
+    Digits                       4
+    Height                       35
+    LeadingZero                  No
+    Left                         74
+    OutlineColor                 BLACK
+    Palette.High                 LIGHTYELLOW
+    Palette.Low                  BLACK
+    Top                          67
+    Width                        120
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+CustomDigits
+    Name                         Customdigits1
+    Alias                        Customdigits1
+    Bitmap                       (None)
+    Digits                       4
+    LeadingZero                  Yes
+    Left                         44
+    Top                          132
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
 end
