@@ -63,6 +63,10 @@ word hndl ;
 #define MENU_QTY 3    // adjust quantity window
 #define MENU_DELAY 4  // state to delay the home menu reset
 
+#define DELETE_KEY 12 // the return value from the kewboard delete key
+#define MAX_PLASTIC_LEN 1000 // max length of plastic sleves
+#define MAX_TOTAL 1000 // max number of plastic sleves
+
 #define MENU_RESET_DELAY 60000 // delay time when the menu resets to the home screen in ms
 
 bool system_stop;
@@ -75,8 +79,12 @@ int total_qty = 1;  // total number of plastic labels to cut
 int current_qty = 0; // current count of how many labels have been cut
 float current_speed = 0;
 int desired_speed = 0; // target running speed
-float cut_length =0; // length to cut each plastic piece
+int cut_length = 0; // length to cut each plastic piece
 bool isEnter = false;
+char* speed_str = "Speed: %d%% ";
+char* qty_str_home = "Qty: %d/%d";
+char* total_str = "Total: %d ";
+char* length_str = "Length: %dmm ";
 
 void setup()
 {
@@ -166,7 +174,7 @@ void loop()
 
       if (menu_state != HOME) {
         // This is for the keyup event
-if (oKeyboard1[KbDown] != -1) kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
+      if (oKeyboard1[KbDown] != -1) kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
         //kbDown(Display, hndl, iKeyboard1, oKeyboard1, iKeyboard1keystrokes, n-iKeyboard1, KbHandler)
       }
     }
@@ -228,7 +236,7 @@ void clearKeyboard(){
   for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++){
     Display.img_SetAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
   }
-  delay(100);
+  delay(25);
   Display.gfx_Cls();   // clear screen
   menu_state = HOME;
   setDisplay();
@@ -256,7 +264,7 @@ void enableUserbutton(bool enable){
 }
 
 void printToScreen(char* str, short x_pos=txt_start_x, short y_pos=txt_start_y) {
-  //Display.txt_BGcolour(SILVER);
+
   Display.txt_FontID(FONT3);
   Display.txt_Width(2) ;
   Display.txt_Height(2) ;
@@ -278,13 +286,13 @@ void homeWindow() {
 
   //add the quantity values to the display
   char str[50];
-  sprintf( str, "Qty : %d/%d", current_qty, total_qty);
+  sprintf( str, qty_str_home, current_qty, total_qty);
   printToScreen(str);  // quantity update
   //add the current motor speed to the display
-  sprintf(str, "Speed : %d", current_speed);
+  sprintf(str, speed_str, current_speed);
   printToScreen(str, txt_start_x, txt_start_x+40);  // quantity update
   //add the set cutting length to the display
-  sprintf(str, "Size : %d", cut_length);
+  sprintf(str, length_str, cut_length);
   printToScreen(str, txt_start_x, txt_start_x+80);  // quantity update
 }
 
@@ -313,7 +321,7 @@ void speedWindow() {
 
   //add the current motor speed to the display
   char str[50];
-  sprintf(str, "Speed : %d", desired_speed);
+  sprintf(str, speed_str, desired_speed);
   printToScreen(str);  // speed update
 }
 
@@ -323,7 +331,7 @@ void lengthWindow() {
 
   //add the set cutting length to the display
   char str[50];
-  sprintf(str, "Size : %d", cut_length);
+  sprintf(str, length_str, cut_length);
   printToScreen(str);  // quantity update
 }
 
@@ -333,7 +341,7 @@ void qtyWindow() {
 
   //add the quantity values to the display
   char str[50];
-  sprintf( str, "Total : %d", total_qty);
+  sprintf( str, total_str, total_qty);
   printToScreen(str);  // quantity update
 }
 
@@ -354,61 +362,47 @@ void setDisplay() {
   }
 }
 
+float updateValue(float num, const int key, const float max_num=100) {
+  if(key == DELETE_KEY) {
+    num = num/10;
+  } else if (num*10 <= max_num) {
+    num = num*10 + key;
+  }
+  if(num > max_num){
+    num = max_num;
+  }
 
+  return num;
+}
 
 void KbHandler(int key)
 {
-  char str[50] = "                      ";
-  byte state ;
-  int n, num;
-
-  //do {
-  //  delay(100);
-  //  state = Display.touch_Get(TOUCH_STATUS);
-  //  n = Display.img_Touched(hndl,-1);
-  //} while(state != TOUCH_RELEASED);
-
+  char str[50];
 
   if(key == 11) {
     isEnter = true;
     menu_state = MENU_DELAY;
-
   } else if(key == 10) {
     key = 0;
   }
 
   switch(menu_state){
     case MENU_SPEED:
-      num = desired_speed;
-      if(key == 12) {
-
-        num = num/10;
-      } else if (num <= 10) {
-        num = num*10 + key;
-      }
-      if(num > 100){
-        num = 100;
-      }
-
-      desired_speed = int(num);
-      str[50] = "                      ";   // reset string
-      sprintf(str, "Speed : %d   ", desired_speed);
+      desired_speed = int(updateValue(desired_speed, key));
+      sprintf(str, speed_str, desired_speed);
       printToScreen(str);  // speed update
       break;
     case MENU_LENGTH:
-      sprintf(str, "Size : %d", key);
+      cut_length = int(updateValue(cut_length, key, MAX_PLASTIC_LEN));
+      sprintf(str, length_str, cut_length);
       printToScreen(str);  // speed update
       break;
     case MENU_QTY:
-      sprintf(str, "Total : %d", key);
+      total_qty = int(updateValue(total_qty, key, MAX_TOTAL));
+      sprintf(str, total_str, total_qty);
       printToScreen(str);  // speed update
       break;
     case MENU_DELAY:
-      state = Display.touch_Get(TOUCH_STATUS);
-      do {
-        delay(100);
-        state = Display.touch_Get(TOUCH_STATUS);
-      } while(state != TOUCH_RELEASED);
       break;
     default:
       menu_state = HOME;
