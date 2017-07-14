@@ -1,4 +1,4 @@
-// File generated 7/14/2017 12:40:27 AM
+// File generated 14-Jul-17 3:38:07 PM
 // Warning! This is a generated file, any manual changes will be
 // lost during the next generation.
 
@@ -18,19 +18,18 @@
 #define iUserbutton1            2 // offset 0x34C00
 #define iUserbutton2            3 // offset 0x38E00
 #define iUserbutton3            4 // offset 0x3D000
-#define iUserbutton4            5 // offset 0x41200
-#define iKeyboard1              6 // offset 0x45400
-#define iKeyboard1_0            7 // offset 0x5C000
-#define iKeyboard1_1            8 // offset 0x5FC00
-#define iKeyboard1_2            9 // offset 0x63800
-#define iKeyboard1_3           10 // offset 0x67400
-#define iKeyboard1_4           11 // offset 0x6B000
-#define iKeyboard1_5           12 // offset 0x6EC00
-#define iKeyboard1_6           13 // offset 0x72800
-#define iKeyboard1_7           14 // offset 0x76400
-#define iKeyboard1_8           15 // offset 0x7A000
-#define iKeyboard1_9           16 // offset 0x7DC00
-#define iKeyboard1_10          17 // offset 0x81800
-#define iKeyboard1_11          18 // offset 0x85400
+#define iKeyboard1              5 // offset 0x41200
+#define iKeyboard1_0            6 // offset 0x59600
+#define iKeyboard1_1            7 // offset 0x5D600
+#define iKeyboard1_2            8 // offset 0x61600
+#define iKeyboard1_3            9 // offset 0x65600
+#define iKeyboard1_4           10 // offset 0x69600
+#define iKeyboard1_5           11 // offset 0x6D600
+#define iKeyboard1_6           12 // offset 0x71600
+#define iKeyboard1_7           13 // offset 0x75600
+#define iKeyboard1_8           14 // offset 0x79600
+#define iKeyboard1_9           15 // offset 0x7D600
+#define iKeyboard1_10          16 // offset 0x81600
+#define iKeyboard1_11          17 // offset 0x85600
 
 int8_t oKeyboard1[12] = {-1, 0, 0, 0, 0, 255, 255, 255, 255, 255, 12, 0} ;

@@ -201,19 +201,6 @@ Form
     OnTouchPressed               ''
     OnTouchReleased              ''
 end
-UserButton
-    Name                         Userbutton4
-    Alias                        homeButton4
-    Height                       64
-    Images                       if_Home_728980_64x64.png
-    Left                         8
-    Matrix                       -1
-    Momentary                    Yes
-    Stretch                      No
-    Top                          172
-    Width                        64
-    OnChanged                    ''
-end
 Keyboard
     Name                         Keyboard1
     Alias                        Keyboard1
@@ -224,17 +211,17 @@ Keyboard
     Font.Name                    Tahoma
     Font.Size                    8
     Font.Style                   []
-    Height                       200
+    Height                       210
     HighlightCaps                BLACK
-    KeyboardType                 KB1
+    KeyboardType                 KB2
     KeyDistance                  0
-    Left                         4
+    Left                         2
     SmallFont.Color              BLACK
     SmallFont.Effects            []
     SmallFont.Name               Tahoma
     SmallFont.Size               7
     SmallFont.Style              []
-    Top                          40
-    Width                        232
+    Top                          35
+    Width                        236
     OnChanged                    ''
 end
