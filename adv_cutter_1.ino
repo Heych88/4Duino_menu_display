@@ -177,12 +177,6 @@ void loop()
       x = Display.touch_Get(TOUCH_GETX);
       y = Display.touch_Get(TOUCH_GETY);
       timer = millis();  // reset the dispaly timeout timer
-
-      if (menu_state != HOME) {
-        // This is for the keyup event
-      if (oKeyboard1[KbDown] != -1) kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
-        //kbDown(Display, hndl, iKeyboard1, oKeyboard1, iKeyboard1keystrokes, n-iKeyboard1, KbHandler)
-      }
     }
 
     //-----------------------------------------------------------------------------------------
@@ -249,7 +243,7 @@ void clearKeyboard(){
   isEnter = false;
 }
 
-void enableUserbutton(bool enable){
+void enableUserbutton(const bool enable){
 
   if(enable) {
     Display.img_ClearAttributes(hndl, iUserbutton1, I_TOUCH_DISABLE); // speedButton set to enable touch,
@@ -269,7 +263,7 @@ void enableUserbutton(bool enable){
   }
 }
 
-void printToScreen(char* str, short x_pos=txt_start_x, short y_pos=txt_start_y) {
+void printToScreen(const char* str, const short x_pos=txt_start_x, const short y_pos=txt_start_y) {
 
   Display.txt_FontID(FONT3);
   Display.txt_Width(2) ;
@@ -277,7 +271,7 @@ void printToScreen(char* str, short x_pos=txt_start_x, short y_pos=txt_start_y) 
   Display.txt_FGcolour(WHITE) ;
   Display.txt_BGcolour(BLACK) ;
   Display.gfx_MoveTo(x_pos, y_pos) ;
-  Display.putstr(str) ;      // quantity
+  Display.putstr(str) ;
   Display.txt_Width(1) ;
   Display.txt_Height(1) ;
 }
@@ -285,14 +279,14 @@ void printToScreen(char* str, short x_pos=txt_start_x, short y_pos=txt_start_y) 
 void homeWindow() {
   // displaye the home window
   
-  // Form1 1.1 generated 15-Jul-17 1:05:10 AM
+  // Form1 1.1 generated 15-Jul-17 1:20:17 AM
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
   enableUserbutton(true);
 
   //add the quantity values to the display
-  char str[50];
+  char str[16];
   sprintf( str, qty_str_home, current_qty, total_qty);
   printToScreen(str);  // quantity update
   //add the current motor speed to the display
@@ -309,7 +303,7 @@ void keyFormDisplay() {
 
   if(menu_state != HOME) {
     
-    // Form2 1.1 generated 15-Jul-17 1:05:10 AM
+    // Form2 1.1 generated 15-Jul-17 1:20:17 AM
     Display.gfx_Cls();   // clear screen
     Display.touch_Set(TOUCH_ENABLE);
 
@@ -323,47 +317,31 @@ void keyFormDisplay() {
   }
 }
 
-void speedWindow() {
-  // displaye the menu window to adjust the motor speed
-  keyFormDisplay();
+void setDisplay() {
 
-  //add the current motor speed to the display
-  char str[50];
-  sprintf(str, speed_str, desired_speed);
-  printToScreen(str);  // speed update
-}
-
-void lengthWindow() {
   // displaye the menu window to adjust the length of the plastic to cut
   keyFormDisplay();
+  char str[16];
 
-  //add the set cutting length to the display
-  char str[50];
-  sprintf(str, length_str, cut_length);
-  printToScreen(str);  // quantity update
-}
-
-void qtyWindow() {
-  // displaye the menu window to adjust the quantity of plastic pieces to cut
-  keyFormDisplay();
-
-  //add the quantity values to the display
-  char str[50];
-  sprintf( str, total_str, total_qty);
-  printToScreen(str);  // quantity update
-}
-
-void setDisplay() {
   // sets the display based on the current menu state
   switch(menu_state){
     case MENU_SPEED:
-      speedWindow();
+      //speedWindow();
+      //add the current motor speed to the display
+      sprintf(str, speed_str, desired_speed);
+      printToScreen(str);  // speed update
       break;
     case MENU_LENGTH:
-      lengthWindow();
+      //lengthWindow();
+      //add the set cutting length to the display
+      sprintf(str, length_str, cut_length);
+      printToScreen(str);  // quantity update
       break;
     case MENU_QTY:
-      qtyWindow();
+      //qtyWindow();
+      //add the quantity values to the display
+      sprintf( str, total_str, total_qty);
+      printToScreen(str);  // quantity update
       break;
     default:
       homeWindow();
@@ -385,7 +363,7 @@ float updateValue(float num, const int key, const float max_num=100) {
 
 void KbHandler(int key)
 {
-  char str[50];
+  char str[16];
 
   if(key == 11) {
     isEnter = true;
