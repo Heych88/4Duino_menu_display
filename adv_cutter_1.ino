@@ -69,7 +69,7 @@ word hndl ;
 #define MENU_QTY 3    // adjust quantity window
 #define MENU_DELAY 4  // state to delay the home menu reset
 
-#define MENU_RESET_DELAY 6000 // delay time when the menu resets to the home screen in ms
+#define MENU_RESET_DELAY 60000 // delay time when the menu resets to the home screen in ms
 
 bool system_stop;
 char menu_state;
@@ -80,7 +80,7 @@ int txt_start_y = 8; // top offset of text
 int total_qty = 1;  // total number of plastic labels to cut
 int current_qty = 0; // current count of how many labels have been cut
 float current_speed = 0;
-float desired_speed = 0; // target running speed
+int desired_speed = 0; // target running speed
 float cut_length =0; // length to cut each plastic piece
 bool isEnter = false;
 
@@ -154,13 +154,12 @@ digitalWrite(RESETLINE, 0);       // Release Display Reset, using shield
 
 } // end Setup **do not alter, remove or duplicate this line**
 
-int n;
 void loop()
 {
   // put your main code here, to run repeatedly:
 
   byte state ;
-  short x, y;
+  int n, x, y;
   while(1) {
     state = Display.touch_Get(TOUCH_STATUS); // get touchscreen status
     n = Display.img_Touched(hndl,-1) ;
@@ -172,19 +171,11 @@ void loop()
       timer = millis();  // reset the dispaly timeout timer
 
       if (menu_state != HOME) {
-        // This is for the keydown event
-        if ((n >= iKeyboard1) && (n <= iKeyboard1+oKeyboard1[KbButtons])){
-          kbDown(Display, hndl, iKeyboard1, oKeyboard1, iKeyboard1keystrokes, n-iKeyboard1, KbHandler) ;  // Keyboard1
-        }
+        // This is for the keyup event
+if (oKeyboard1[KbDown] != -1) kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
+        //kbDown(Display, hndl, iKeyboard1, oKeyboard1, iKeyboard1keystrokes, n-iKeyboard1, KbHandler)
       }
     }
-
-    //-----------------------------------------------------------------------------------------
-    //if((menu_state == MENU_SPEED) && (state == TOUCH_MOVING)) {  // if it's moving
-    //  x = Display.touch_Get(TOUCH_GETX);
-    //  y = Display.touch_Get(TOUCH_GETY);
-    //  timer = millis();
-    //}
 
     //-----------------------------------------------------------------------------------------
     if(state == TOUCH_RELEASED) {                     // if there's a release
@@ -212,9 +203,10 @@ void loop()
           menu_state = MENU_QTY;
           setDisplay();
         }
-      } else if ((isEnter == false) && (oKeyboard1[KbDown] != -1)) {
+      } else if ((n >= iKeyboard1) && (n <= iKeyboard1+oKeyboard1[KbButtons])){
+        kbDown(Display, hndl, iKeyboard1, oKeyboard1, iKeyboard1keystrokes, n-iKeyboard1, KbHandler) ;  // Keyboard1
         // This is for the keyup event
-        kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
+        if (oKeyboard1[KbDown] != -1) kbUp(Display, hndl, iKeyboard1, oKeyboard1) ;  // Keyboard1
       }
     } else if (isEnter == true){
       // disable and clear the kewboard1
@@ -255,6 +247,13 @@ void enableUserbutton(bool enable){
     Display.img_ClearAttributes(hndl, iUserbutton1, I_TOUCH_DISABLE); // speedButton set to enable touch,
     Display.img_ClearAttributes(hndl, iUserbutton2, I_TOUCH_DISABLE); // lengthButton set to enable touch,
     Display.img_ClearAttributes(hndl, iUserbutton3, I_TOUCH_DISABLE); // quantityButton set to enable touch,
+
+    Display.img_SetWord(hndl, iUserbutton1, IMAGE_INDEX, 0); // speedButton where state is 0 for up and 1 for down, or 2 total states
+    Display.img_Show(hndl,iUserbutton1) ;  // speedButton
+    Display.img_SetWord(hndl, iUserbutton2, IMAGE_INDEX, 0); // lengthButton where state is 0 for up and 1 for down, or 2 total states
+    Display.img_Show(hndl,iUserbutton2) ;  // lengthButton
+    Display.img_SetWord(hndl, iUserbutton3, IMAGE_INDEX, 0); // quantityButton where state is 0 for up and 1 for down, or 2 total states
+    Display.img_Show(hndl,iUserbutton3) ;  // quantityButton
   } else {
     Display.img_SetAttributes(hndl, iUserbutton1, I_TOUCH_DISABLE); // speedButton set to enable touch, only need to do this once
     Display.img_SetAttributes(hndl, iUserbutton2, I_TOUCH_DISABLE); // lengthButton set to enable touch, only need to do this once
@@ -278,18 +277,11 @@ void printToScreen(char* str, short x_pos=txt_start_x, short y_pos=txt_start_y) 
 void homeWindow() {
   // displaye the home window
   
-  // Form1 1.1 generated 14-Jul-17 7:02:03 PM
+  // Form1 1.1 generated 14-Jul-17 11:36:15 PM
   Display.gfx_Cls();   // clear screen
 
   stopStartButtonDispaly();
   enableUserbutton(true);
-
-  Display.img_SetWord(hndl, iUserbutton1, IMAGE_INDEX, 0); // speedButton where state is 0 for up and 1 for down, or 2 total states
-  Display.img_Show(hndl,iUserbutton1) ;  // speedButton
-  Display.img_SetWord(hndl, iUserbutton2, IMAGE_INDEX, 0); // lengthButton where state is 0 for up and 1 for down, or 2 total states
-  Display.img_Show(hndl,iUserbutton2) ;  // lengthButton
-  Display.img_SetWord(hndl, iUserbutton3, IMAGE_INDEX, 0); // quantityButton where state is 0 for up and 1 for down, or 2 total states
-  Display.img_Show(hndl,iUserbutton3) ;  // quantityButton
 
   //add the quantity values to the display
   char str[50];
@@ -309,7 +301,7 @@ void keyFormDisplay() {
 
   if(menu_state != HOME) {
     
-    // Form2 1.1 generated 14-Jul-17 7:02:03 PM
+    // Form2 1.1 generated 14-Jul-17 11:36:15 PM
     Display.gfx_Cls();   // clear screen
     Display.touch_Set(TOUCH_ENABLE);
 
@@ -329,7 +321,7 @@ void speedWindow() {
 
   //add the current motor speed to the display
   char str[50];
-  sprintf(str, "Speed : %d", current_speed);
+  sprintf(str, "Speed : %d", desired_speed);
   printToScreen(str);  // speed update
 }
 
@@ -339,7 +331,7 @@ void lengthWindow() {
 
   //add the set cutting length to the display
   char str[50];
-  sprintf(str, "size : %d", cut_length);
+  sprintf(str, "Size : %d", cut_length);
   printToScreen(str);  // quantity update
 }
 
@@ -370,30 +362,53 @@ void setDisplay() {
   }
 }
 
-void KbHandler(int Key)
-{
-  char str[50];
-  byte state ;
 
-  if(Key == 11) {
+
+void KbHandler(int key)
+{
+  char str[50] = "                      ";
+  byte state ;
+  int n, num;
+
+  //do {
+  //  delay(100);
+  //  state = Display.touch_Get(TOUCH_STATUS);
+  //  n = Display.img_Touched(hndl,-1);
+  //} while(state != TOUCH_RELEASED);
+
+
+  if(key == 11) {
     isEnter = true;
     menu_state = MENU_DELAY;
 
-  } else if(Key == 10) {
-    Key = 0;
+  } else if(key == 10) {
+    key = 0;
   }
 
   switch(menu_state){
     case MENU_SPEED:
-      sprintf(str, "Speed : %d", Key);
+      num = desired_speed;
+      if(key == 12) {
+
+        num = num/10;
+      } else if (num <= 10) {
+        num = num*10 + key;
+      }
+      if(num > 100){
+        num = 100;
+      }
+
+      desired_speed = int(num);
+      str[50] = "                      ";   // reset string
+      sprintf(str, "Speed : %d   ", desired_speed);
       printToScreen(str);  // speed update
       break;
     case MENU_LENGTH:
-      sprintf(str, "Size : %d", Key);
+      sprintf(str, "Size : %d", key);
       printToScreen(str);  // speed update
       break;
     case MENU_QTY:
-      sprintf(str, "Total : %d", Key);
+      sprintf(str, "Total : %d", key);
       printToScreen(str);  // speed update
       break;
     case MENU_DELAY:
@@ -402,11 +417,6 @@ void KbHandler(int Key)
         delay(100);
         state = Display.touch_Get(TOUCH_STATUS);
       } while(state != TOUCH_RELEASED);
-      // disable and clear the kewboard1
-      //for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++){
-      //  Display.img_SetAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
-      //}
-      //delay(50);
       break;
     default:
       menu_state = HOME;
