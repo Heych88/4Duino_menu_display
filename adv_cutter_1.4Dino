@@ -77,11 +77,11 @@ int txt_start_x = 8; // left offset of text
 int txt_start_y = 8; // top offset of text
 int total_qty = 1;  // total number of plastic labels to cut
 int current_qty = 0; // current count of how many labels have been cut
-float current_speed = 0;
+float current_speed = 0; // the measured motor speed
 int desired_speed = 0; // target running speed
 int cut_length = 0; // length to cut each plastic piece
-bool isEnter = false;
-char* speed_str = "Speed: %d%% ";
+bool isEnter = false;  // used
+char* speed_str = "Speed: %d%% ";   // display string when displaying the speed
 char* qty_str_home = "Qty: %d/%d";
 char* total_str = "Total: %d ";
 char* length_str = "Length: %dmm ";
@@ -175,7 +175,9 @@ void loop()
 
     //-----------------------------------------------------------------------------------------
     if(state == TOUCH_RELEASED) {                     // if there's a release
+      // check the touch coordinates against buttons on the screen and their screen location
       if ((x >= 0) && (x <= 240) && (y >= 250) && (y <= 320)){     // Width=188 Height= 50
+        // the stop / start button was pressed
         if (system_stop){
           // Start running the apllication
           system_stop = false; // change system state as it is now active
@@ -214,7 +216,7 @@ void loop()
 }
 
 void stopStartButtonDispaly() {
-
+  // displays the stop start button dependent on its current state
   if (system_stop){
     // display the start button
     Display.img_SetWord(hndl, iWinbutton1, IMAGE_INDEX, 0); // startButton where state is 0 for up, 1 for down, 2 for 'on' up and 3 for 'on' down
@@ -226,20 +228,23 @@ void stopStartButtonDispaly() {
 }
 
 void clearKeyboard(){
-  // disable and clear the kewboard1
+  // clear the kewboard1 from the screen and disable the keyboard touch
   for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++){
     Display.img_SetAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
   }
   delay(25);
   Display.gfx_Cls();   // clear screen
-  menu_state = HOME;
+  menu_state = HOME;   // set the system state to the HOME screen
   setDisplay();
-  isEnter = false;
+
+  isEnter = false;     // clear keypad variables
 }
 
 void enableUserbutton(const bool enable){
-
+  // displays or removes the menu user buttons from screen based of system state
+  // @param: enable, true => displays the userbuttons, false => disables userbuttons
   if(enable) {
+    // dispaly and enable the menu user buttons
     Display.img_ClearAttributes(hndl, iUserbutton1, I_TOUCH_DISABLE); // speedButton set to enable touch,
     Display.img_ClearAttributes(hndl, iUserbutton2, I_TOUCH_DISABLE); // lengthButton set to enable touch,
     Display.img_ClearAttributes(hndl, iUserbutton3, I_TOUCH_DISABLE); // quantityButton set to enable touch,
@@ -251,6 +256,7 @@ void enableUserbutton(const bool enable){
     Display.img_SetWord(hndl, iUserbutton3, IMAGE_INDEX, 0); // quantityButton where state is 0 for up and 1 for down, or 2 total states
     Display.img_Show(hndl,iUserbutton3) ;  // quantityButton
   } else {
+    // disable the menu userbuttons
     Display.img_SetAttributes(hndl, iUserbutton1, I_TOUCH_DISABLE); // speedButton set to enable touch, only need to do this once
     Display.img_SetAttributes(hndl, iUserbutton2, I_TOUCH_DISABLE); // lengthButton set to enable touch, only need to do this once
     Display.img_SetAttributes(hndl, iUserbutton3, I_TOUCH_DISABLE); // quantityButton set to enable touch, only need to do this once
@@ -258,7 +264,10 @@ void enableUserbutton(const bool enable){
 }
 
 void printToScreen(const char* str, const short x_pos=txt_start_x, const short y_pos=txt_start_y) {
-
+  // display text onto the screen
+  // @param: str, text to display
+  // @param: x_pos, position of the text top left in the x coordinate
+  // @param: y_pos, position of the text top left in the y coordinate
   Display.txt_FontID(FONT3);
   Display.txt_Width(2) ;
   Display.txt_Height(2) ;
@@ -291,7 +300,7 @@ void homeWindow() {
 }
 
 void keyFormDisplay() {
-
+  // enables and displays the numeric keypad on the display
   enableUserbutton(false);
 
   if(menu_state != HOME) {
@@ -310,7 +319,6 @@ void keyFormDisplay() {
 }
 
 void setDisplay() {
-
   // displaye the menu window to adjust the length of the plastic to cut
   keyFormDisplay();
   char str[16];
