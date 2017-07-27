@@ -311,9 +311,10 @@ void keyFormDisplay() {
     stopStartButtonDispaly();
     isEnter = false;
 
+    // display the keypad
     Display.img_Show(hndl,iKeyboard1) ; // Keyboard1 show initial keyboard
     for (uint8_t i = iKeyboard1+1; i <= iKeyboard1+oKeyboard1[KbButtons]; i++){
-      Display.img_ClearAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch, only need to do this once  next
+      Display.img_ClearAttributes(hndl, i, I_TOUCH_DISABLE); // Keyboard1 set to enable touch
     }
   }
 }
@@ -349,44 +350,55 @@ void setDisplay() {
 }
 
 float updateValue(float num, const int key, const float max_num=100) {
+  // updates the value enter from the keypad
+  // @param: num, the value to be updated by the key pressed
+  // @param: key, key pressed on the keypad
+  // @param: max_num, max value that num can be
+  // return: the updated number
   if(key == DELETE_KEY) {
     num = num/10;
-  } else if (num*10 <= max_num) {
+  } else if (num*10 <= max_num) {  // check if the addition of the key number will not exceed the max value
     num = num*10 + key;
   }
   if(num > max_num){
     num = max_num;
   }
-
   return num;
 }
 
-void KbHandler(int key)
-{
+void KbHandler(int key) {
+  // handler for the keyboard
+  // @param: pressed keyboard key
+  // key => numeric value
+  // 1 => 1, 2 => 2, ...., 9 => 9, 10 => 0, 11 => ENTER, 12 => DELETE
   char str[16];
 
+  // check if the enter / return key was pressed to store the updated values and return to the home state after a delay
   if(key == 11) {
     isEnter = true;
     menu_state = MENU_DELAY;
   } else if(key == 10) {
+    // the zero key was pressed so change its value from its identifier of 10.
+    // all other numeric keys identifiers corespond to their numeric value
     key = 0;
   }
 
   switch(menu_state){
     case MENU_SPEED:
+      // change the desired speed value with the input key value
       desired_speed = int(updateValue(desired_speed, key));
-      sprintf(str, speed_str, desired_speed);
+      sprintf(str, speed_str, desired_speed);  // print the updated speed value to screen
       printToScreen(str);  // speed update
       break;
-    case MENU_LENGTH:
+    case MENU_LENGTH:  // plastic cut length update
       cut_length = int(updateValue(cut_length, key, MAX_PLASTIC_LEN));
       sprintf(str, length_str, cut_length);
-      printToScreen(str);  // speed update
+      printToScreen(str);
       break;
-    case MENU_QTY:
+    case MENU_QTY:    // update the amount of plastic peices to cut
       total_qty = int(updateValue(total_qty, key, MAX_TOTAL));
       sprintf(str, total_str, total_qty);
-      printToScreen(str);  // speed update
+      printToScreen(str);
       break;
     case MENU_DELAY:
       break;
