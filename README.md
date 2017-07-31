@@ -22,15 +22,22 @@ which is only available on a Windows platform.
 Install the [Arduino IDE](https://www.arduino.cc/en/Main/Software) and  
 [4D Workshop IDE](http://www.4dsystems.com.au/product/4D_Workshop_4_IDE) as per their instructions.
 
+Clone this repository.
+```
+git clone https://github.com/Heych88/4Duino_menu_display.git
+```
+
 ## Run the Code
 
 1. Run the installed 4D Workshop IDE and connect the 4duino via USB. Check the IDE is communicating with the 4duino by opening the **Comms** tab. Select the correct Comms Port for the 4duino.
 
-2. Plug the Micro SD card into the computer.
+2. Open the repositories program in the IDE. 
 
-3. Press the **Build/Copy/Load** button on the home tab.
+3. Plug the Micro SD card into the computer.
 
-4. Remove the SD card from the computer and insert into the 4duino. 
+4. Press the **Build/Copy/Load** button on the home tab.
+
+5. Remove the SD card from the computer and insert into the 4duino. 
 
 ## Usage
 
